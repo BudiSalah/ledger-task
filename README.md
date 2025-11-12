@@ -123,7 +123,10 @@ Once the application is running, visit:
 ## Running Tests
 
 ```bash
-# Run all tests
+# Run all tests (unit, integration, and E2E)
+pnpm test:all
+
+# Run unit tests only
 pnpm test
 
 # Run tests in watch mode
@@ -132,8 +135,36 @@ pnpm run test:watch
 # Run tests with coverage
 pnpm run test:cov
 
-# Run E2E tests
-pnpm run test:e2e
+# Run integration tests (requires PostgreSQL running)
+pnpm test:integration
+
+# Run E2E tests (requires PostgreSQL running)
+pnpm test:e2e
+```
+
+### Test Types
+
+- **Unit Tests** (`pnpm test`): Fast, isolated tests for individual services
+
+  - Location: `src/**/*.spec.ts`
+  - No database required
+
+- **Integration Tests** (`pnpm test:integration`): Test database operations with real PostgreSQL
+
+  - Location: `test/integration/**/*.integration.spec.ts`
+  - Requires: PostgreSQL running (`docker-compose up -d`)
+
+- **E2E Tests** (`pnpm test:e2e`): Full HTTP API tests with real database
+  - Location: `test/e2e/**/*.e2e-spec.ts`
+  - Requires: PostgreSQL running (`docker-compose up -d`)
+  - Tests complete request/response cycle
+
+### Prerequisites for Integration & E2E Tests
+
+Make sure PostgreSQL is running before running integration or E2E tests:
+
+```bash
+docker-compose up -d
 ```
 
 ## API Usage Examples
