@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, Inject } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Transaction } from './entities/transaction.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -15,7 +14,7 @@ export class WalletService {
   >();
 
   constructor(
-    @InjectRepository(Transaction)
+    @Inject(DataSource)
     private readonly dataSource: DataSource,
     private readonly currencyService: CurrencyService
   ) {}
@@ -94,12 +93,26 @@ export class WalletService {
   }
 
   private async calculateBalance(manager: any): Promise<number> {
-    const result = await manager
-      .createQueryBuilder(Transaction, 'transaction')
-      .select('COALESCE(SUM(transaction.amount), 0)', 'balance')
-      .getRawOne();
+    // Use PostgreSQL advisory lock to serialize balance calculations
+    // This prevents race conditions when multiple withdrawals happen concurrently
+    const lockId = 12345; // Fixed lock ID for balance calculations
 
-    return parseFloat(result.balance) || 0;
+    try {
+      // Acquire advisory lock (blocks until available)
+      await manager.query('SELECT pg_advisory_xact_lock($1)', [lockId]);
+
+      // Calculate balance while holding the lock
+      const result = await manager
+        .createQueryBuilder(Transaction, 'transaction')
+        .select('COALESCE(SUM(transaction.amount), 0)', 'balance')
+        .getRawOne();
+
+      // Lock is automatically released when transaction commits/rolls back
+      return parseFloat(result.balance) || 0;
+    } catch (error) {
+      // Lock will be released automatically on transaction rollback
+      throw error;
+    }
   }
 
   private toResponseDto(
