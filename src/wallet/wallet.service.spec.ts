@@ -88,6 +88,7 @@ describe('WalletService', () => {
         findOne: jest.fn().mockResolvedValue(null),
         create: jest.fn().mockReturnValue(mockTransaction),
         save: jest.fn().mockResolvedValue(mockTransaction),
+        query: jest.fn().mockResolvedValue([]), // Mock advisory lock query
         createQueryBuilder: jest.fn().mockReturnValue({
           select: jest.fn().mockReturnThis(),
           getRawOne: jest.fn().mockResolvedValue({ balance: '0' }),
@@ -138,6 +139,7 @@ describe('WalletService', () => {
         findOne: jest.fn().mockResolvedValue(null),
         create: jest.fn().mockReturnValue(withdrawalTransaction),
         save: jest.fn().mockResolvedValue(withdrawalTransaction),
+        query: jest.fn().mockResolvedValue([]), // Mock advisory lock query
         createQueryBuilder: jest.fn().mockReturnValue({
           select: jest.fn().mockReturnThis(),
           getRawOne: jest.fn().mockResolvedValue({ balance: '5000' }),
@@ -168,6 +170,7 @@ describe('WalletService', () => {
       const mockManager = {
         findOne: jest.fn().mockResolvedValue(null),
         create: jest.fn(),
+        query: jest.fn().mockResolvedValue([]), // Mock advisory lock query
         createQueryBuilder: jest.fn().mockReturnValue({
           select: jest.fn().mockReturnThis(),
           getRawOne: jest.fn().mockResolvedValue({ balance: '100' }),
@@ -208,6 +211,7 @@ describe('WalletService', () => {
       const mockManager = {
         findOne: jest.fn().mockResolvedValue(existingTransaction),
         create: jest.fn(),
+        query: jest.fn().mockResolvedValue([]), // Mock advisory lock query
         createQueryBuilder: jest.fn().mockReturnValue({
           select: jest.fn().mockReturnThis(),
           getRawOne: jest.fn().mockResolvedValue({ balance: '3100' }),
@@ -243,6 +247,7 @@ describe('WalletService', () => {
         findOne: jest.fn().mockResolvedValue(null),
         create: jest.fn().mockReturnValue(mockTransaction),
         save: jest.fn().mockResolvedValue(mockTransaction),
+        query: jest.fn().mockResolvedValue([]), // Mock advisory lock query
         createQueryBuilder: jest.fn().mockReturnValue({
           select: jest.fn().mockReturnThis(),
           getRawOne: jest.fn().mockResolvedValue({ balance: '0' }),
